@@ -1,5 +1,6 @@
 package com.example.videoplayer.custom_recycler_view;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -17,12 +18,16 @@ public class VideoPlayerRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
 
     private static final String TAG = "VideoPlayerRecycler";
     private ArrayList<Video> videos;
-
-    public VideoPlayerRecyclerAdapter(ArrayList<Video> videos) {
+    private Context context;
+    
+    public void setVideos(ArrayList<Video> videos) {
         this.videos = videos;
-        Log.e(TAG, "VideoPlayerRecyclerAdapter: " + videos.size());
     }
-
+    
+    public void setContext(Context context) {
+        this.context = context;
+    }
+    
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -33,7 +38,7 @@ public class VideoPlayerRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         Log.e(TAG, "onBindViewHolder: " + i);
-        ((VideoPlayerViewHolder) viewHolder).onBind(videos.get(i));
+        ((VideoPlayerViewHolder) viewHolder).onBind(videos.get(i) , context);
     }
 
     @Override

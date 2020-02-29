@@ -1,24 +1,32 @@
 package com.example.videoplayer.model;
 
-import android.net.Uri;
-
 public class Video {
-    private Uri uri;
+    private String videoUrl;
     private String title;
-
-    public Video(Uri uri, String title) {
-        this.uri = uri;
+    private String thumbnailUrl;
+    
+    public Video(String title, String videoUrl, String thumbnailUrl) {
+        this.videoUrl = videoUrl;
         this.title = title;
+        this.thumbnailUrl = thumbnailUrl;
     }
-
-    public Uri getUri() {
-        return uri;
+    
+    public String getVideoUrl() {
+        return videoUrl;
     }
-
-    public void setUri(Uri uri) {
-        this.uri = uri;
+    
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
     }
-
+    
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+    
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
+    }
+    
     public String getTitle() {
         return title;
     }

@@ -1,6 +1,5 @@
 package com.example.videoplayer.base;
 
-import com.example.videoplayer.di.AppComponent;
 import com.example.videoplayer.di.DaggerAppComponent;
 
 import dagger.android.AndroidInjector;
