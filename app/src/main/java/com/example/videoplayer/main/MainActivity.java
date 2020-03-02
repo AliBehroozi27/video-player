@@ -76,6 +76,20 @@ public class MainActivity extends BaseActivity {
             recyclerView.releasePlayer();
         super.onDestroy();
     }
-
+    
+    @Override
+    protected void onStop() {
+        if (recyclerView != null)
+            recyclerView.stop();
+        super.onStop();
+    }
+    
+    @Override
+    protected void onResume() {
+        if (!recyclerView.isPlayerNull()){
+            recyclerView.resume();
+        }
+        super.onResume();
+    }
 }
 

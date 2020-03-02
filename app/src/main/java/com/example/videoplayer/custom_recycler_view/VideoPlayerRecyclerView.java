@@ -110,6 +110,7 @@ public class VideoPlayerRecyclerView extends RecyclerView {
                 super.onScrollStateChanged(recyclerView, newState);
     
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+    
                     Log.d(TAG, "onScrollStateChanged: called.");
                     if (thumbnail != null) { // show the old thumbnail
                         thumbnail.setVisibility(VISIBLE);
@@ -227,6 +228,8 @@ public class VideoPlayerRecyclerView extends RecyclerView {
     }
     
     public void playVideo(boolean isEndOfList) {
+    
+        Log.e(TAG, "playVideo: " + "FFFFf");
         
         int targetPosition;
         
@@ -383,6 +386,19 @@ public class VideoPlayerRecyclerView extends RecyclerView {
         
         viewHolderParent = null;
     }
+    
+    public void stop() {
+        videoPlayer.setPlayWhenReady(false);
+    }
+    
+    public void resume() {
+        videoPlayer.setPlayWhenReady(true);
+    }
+    
+    public boolean isPlayerNull() {
+        return videoPlayer == null;
+    }
+    
     
     private void toggleVolume() {
         if (videoPlayer != null) {
