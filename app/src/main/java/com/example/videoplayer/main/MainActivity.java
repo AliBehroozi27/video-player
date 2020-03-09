@@ -67,6 +67,8 @@ public class MainActivity extends BaseActivity {
         recyclerView.addItemDecoration(itemDecorator);
         recyclerView.setVideos(videos);
         recyclerView.setAdapter(adapter);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setNestedScrollingEnabled(false);
     }
 
 

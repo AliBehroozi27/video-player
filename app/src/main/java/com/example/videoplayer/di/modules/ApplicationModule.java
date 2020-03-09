@@ -3,9 +3,11 @@ package com.example.videoplayer.di.modules;
 import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.UriMatcher;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.videoplayer.Util;
 import com.example.videoplayer.custom_recycler_view.VerticalSpacingItemDecorator;
 import com.example.videoplayer.custom_recycler_view.VideoPlayerRecyclerAdapter;
 import com.example.videoplayer.di.AppComponent;
@@ -34,4 +36,8 @@ public class ApplicationModule {
         return new VideoPlayerRecyclerAdapter();
     }
 
+    @Provides
+    static Util provideUtil(Application application){
+        return new Util(application);
+    }
 }
