@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Display;
@@ -22,16 +23,25 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.videoplayer.R;
 import com.example.videoplayer.model.Video;
+import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.mediacodec.MediaCodecInfo;
+import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
+import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
+import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
@@ -41,9 +51,13 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultDataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
+import com.google.android.exoplayer2.video.VideoListener;
 
 import java.util.ArrayList;
 
@@ -52,6 +66,7 @@ public class VideoPlayerRecyclerView extends RecyclerView {
     private static final String TAG = "VideoPlayerRecyclerView";
     private int secondItemStartPosition;
     private boolean justPlayed;
+    private Handler mainHandler = new Handler();
 
     private enum VolumeState {ON, OFF}
 
@@ -96,14 +111,19 @@ public class VideoPlayerRecyclerView extends RecyclerView {
         videoSurfaceView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
         videoSurfaceView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
 
+        LoadControl loadControl = new DefaultLoadControl.Builder()
+                .createDefaultLoadControl();
+
+
         BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
         TrackSelection.Factory videoTrackSelectionFactory =
                 new AdaptiveTrackSelection.Factory(bandwidthMeter);
+
         TrackSelector trackSelector =
                 new DefaultTrackSelector(videoTrackSelectionFactory);
 
         // Create the player
-        videoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector);
+        videoPlayer = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(videoSurfaceView.getContext()), trackSelector, loadControl);
         // Bind the player to the view.
         videoSurfaceView.setUseController(false);
         videoSurfaceView.setPlayer(videoPlayer);
@@ -114,7 +134,7 @@ public class VideoPlayerRecyclerView extends RecyclerView {
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    Log.e(TAG, "-----------------------------------------" );
+                    Log.e(TAG, "-----------------------------------------");
                     if (thumbnail != null) { // show the old thumbnail
                         thumbnail.setVisibility(VISIBLE);
                     }
@@ -159,12 +179,11 @@ public class VideoPlayerRecyclerView extends RecyclerView {
 //                        @Override
 //                        public void run() {
 //                            justPlayed = false;
-//
 //                        }
 //                    }, 1000);
 //
 //                }
-                if (dy < 10 && dy > 0) {
+                if (dy < 10 && dy > -10) {
                     Log.e(TAG, "-----------------------------------------" + dy);
                     if (thumbnail != null) { // show the old thumbnail
                         thumbnail.setVisibility(VISIBLE);
@@ -218,11 +237,12 @@ public class VideoPlayerRecyclerView extends RecyclerView {
 
                     case Player.STATE_BUFFERING:
                         Log.e(TAG, "onPlayerStateChanged: Buffering video.");
-                        if (progressBar != null) {
-                            progressBar.setVisibility(VISIBLE);
-                        }
+
                         if (!isVideoViewAdded) {
                             addVideoView();
+                        }
+                        if (progressBar != null) {
+                            progressBar.setVisibility(VISIBLE);
                         }
 
                         break;

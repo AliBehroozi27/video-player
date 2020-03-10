@@ -76,23 +76,9 @@ public class VideoPlayerViewHolder extends RecyclerView.ViewHolder {
         Drawable d = Drawable.createFromStream(ims, null);
 
         thumbnail.setImageDrawable(d);
-        Log.e(TAG, "onBind: " + d.getIntrinsicHeight());
-        //Log.e(TAG, "onBind: " + d.getHeight());
-        Log.e(TAG, "onBind: " + (util.getDp()*d.getMinimumHeight()));
+//        Drawable d = context.getResources().getDrawable(R.drawable.ic_launcher_background);
+//        thumbnail.setImageResource(d);
+
         media_container.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, d.getMinimumHeight() * util.getDp()));
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
