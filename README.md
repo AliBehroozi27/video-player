@@ -1,4 +1,4 @@
-# videoPlayer
+# VideoPlayer
 shows a list of videos and autoplay videos like instagram.
 
 - videos are played using exoplayer
